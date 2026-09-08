@@ -1,32 +1,27 @@
-# React + TypeScript + Vite
+# Time Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A personal time tracker for logging how much time you spend on each project, per day.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Projects** — add, edit, delete; shown as cards on the dashboard.
+- **Timer** — Start / Pause / Resume / End per project, with a live-ticking display and today's total.
+- **Overtime** — daily work beyond 8 hours (combined across all projects) is tracked as OT, shown on the dashboard, in History, and in the Weekly Summary.
+- **Auto-stop** — a timer left running overnight is automatically closed at the end of the day it started, so it never silently bleeds into the next day.
+- **History** — a day-by-day log of every session, with inline editing (start/end time) and delete.
+- **Weekly summary** — per-project totals and a daily overtime breakdown for the selected week.
+- **Export / Import** — download all data as JSON and restore it later, since everything is stored locally.
 
-## React Compiler
+## Data storage
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+All data lives in the browser's `localStorage` — there's no backend or account. That means it persists across restarts on the same browser/device, but isn't backed up anywhere automatically. Use **Export JSON** periodically if you want a portable backup.
 
-## Expanding the Oxlint configuration
+## Development
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev      # start the dev server
+npm run build    # type-check and build for production
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Built with React, TypeScript, Vite, and Tailwind CSS.
