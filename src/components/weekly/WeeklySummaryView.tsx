@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { formatDuration, formatShortDate, formatWeekRange, getWeekRange, shiftWeek } from '../../lib/date';
 import { sumByProjectForDays } from '../../lib/time-entries';
-import { getDayTotalMs, getOvertimeMs, getRegularMs } from '../../lib/overtime';
+import { getDayTotalMs, getOvertimeMs, getRegularMs, splitWorkAndBreakEntries } from '../../lib/overtime';
 import { WeeklyProjectBar } from './WeeklyProjectBar';
 import { Button } from '../ui/Button';
 
@@ -20,13 +20,26 @@ export function WeeklySummaryView() {
     .map((project) => ({ project, ms: totals[project.id] ?? 0 }))
     .sort((a, b) => b.ms - a.ms);
 
+  const projectsById = useMemo(() => new Map(projects.map((p) => [p.id, p])), [projects]);
+  const { work, breakEntries } = useMemo(
+    () => splitWorkAndBreakEntries(timeEntries, projectsById),
+    [timeEntries, projectsById],
+  );
+
   const dailyBreakdown = useMemo(
     () =>
       days.map((dateKey) => {
-        const dayTotalMs = getDayTotalMs(timeEntries, dateKey);
-        return { dateKey, dayTotalMs, regularMs: getRegularMs(dayTotalMs), overtimeMs: getOvertimeMs(dayTotalMs) };
+        const dayTotalMs = getDayTotalMs(work, dateKey);
+        const breakMs = getDayTotalMs(breakEntries, dateKey);
+        return {
+          dateKey,
+          dayTotalMs,
+          regularMs: getRegularMs(dayTotalMs),
+          overtimeMs: getOvertimeMs(dayTotalMs),
+          breakMs,
+        };
       }),
-    [days, timeEntries],
+    [days, work, breakEntries],
   );
   const weeklyOvertimeMs = dailyBreakdown.reduce((sum, d) => sum + d.overtimeMs, 0);
 
@@ -77,6 +90,7 @@ export function WeeklySummaryView() {
                 <th className="pb-2 font-medium">Total</th>
                 <th className="pb-2 font-medium">Regular</th>
                 <th className="pb-2 font-medium">OT</th>
+                <th className="pb-2 font-medium">Break</th>
               </tr>
             </thead>
             <tbody>
@@ -91,6 +105,9 @@ export function WeeklySummaryView() {
                   </td>
                   <td className="py-1.5 font-mono tabular-nums text-amber-700 dark:text-amber-400">
                     {d.overtimeMs > 0 ? formatDuration(d.overtimeMs) : '–'}
+                  </td>
+                  <td className="py-1.5 font-mono tabular-nums text-slate-500 dark:text-slate-400">
+                    {d.breakMs > 0 ? formatDuration(d.breakMs) : '–'}
                   </td>
                 </tr>
               ))}

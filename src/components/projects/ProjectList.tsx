@@ -47,11 +47,11 @@ export function ProjectList() {
         <ProjectFormModal
           project={editing === 'new' ? undefined : editing}
           onClose={() => setEditing(null)}
-          onSave={(name, color) => {
+          onSave={(name, color, isBreak) => {
             if (editing === 'new') {
-              addProject(name, color);
+              addProject(name, color, isBreak);
             } else {
-              updateProject(editing.id, { name, color });
+              updateProject(editing.id, { name, color, isBreak });
             }
             setEditing(null);
           }}

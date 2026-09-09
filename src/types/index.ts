@@ -3,6 +3,8 @@ export interface Project {
   name: string;
   color: string;
   createdAt: string;
+  /** Break/rest time — tracked normally but excluded from the daily work total and overtime. */
+  isBreak: boolean;
 }
 
 /** One contiguous block of work. `end === null` means the segment is currently running. */

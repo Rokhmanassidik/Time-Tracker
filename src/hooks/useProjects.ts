@@ -8,12 +8,13 @@ export function useProjects() {
   const [projects, setProjects] = useLocalStorageState<Project[]>(STORAGE_KEY, []);
 
   const addProject = useCallback(
-    (name: string, color: string) => {
+    (name: string, color: string, isBreak: boolean = false) => {
       const project: Project = {
         id: crypto.randomUUID(),
         name,
         color,
         createdAt: new Date().toISOString(),
+        isBreak,
       };
       setProjects((prev) => [...prev, project]);
       return project;
@@ -22,7 +23,7 @@ export function useProjects() {
   );
 
   const updateProject = useCallback(
-    (id: string, patch: Partial<Pick<Project, 'name' | 'color'>>) => {
+    (id: string, patch: Partial<Pick<Project, 'name' | 'color' | 'isBreak'>>) => {
       setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
     },
     [setProjects],

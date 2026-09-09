@@ -1,4 +1,4 @@
-import { Pause, Pencil, Play, Square, Trash2 } from 'lucide-react';
+import { Coffee, Pause, Pencil, Play, Square, Trash2 } from 'lucide-react';
 import { useTracker } from '../../context/TrackerContext';
 import { useNow } from '../../hooks/useNow';
 import { formatDuration } from '../../lib/date';
@@ -39,6 +39,12 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full" style={{ backgroundColor: project.color }} />
           </span>
           <h3 className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{project.name}</h3>
+          {project.isBreak && (
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+              <Coffee size={10} />
+              Break
+            </span>
+          )}
         </div>
         <div className="flex shrink-0 gap-0.5">
           <button
