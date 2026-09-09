@@ -61,13 +61,3 @@ export function autoCloseStaleEntries(
   });
   return changed ? { entries: next, changed } : { entries, changed };
 }
-
-/** Replaces one segment's start and end time. Caller is responsible for validating the new values. */
-export function updateSegment(entry: TimeEntry, segmentId: string, newStartISO: string, newEndISO: string): TimeEntry {
-  return {
-    ...entry,
-    segments: entry.segments.map((s): Segment =>
-      s.id === segmentId ? { ...s, start: newStartISO, end: newEndISO } : s,
-    ),
-  };
-}

@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { DaySessionList } from './DaySessionList';
+import { DayDetailView } from './DayDetailView';
 
 export function HistoryView() {
-  const { projects, timeEntries, editSegment, deleteEntry } = useTracker();
+  const { projects, timeEntries, deleteEntry } = useTracker();
+  const [openDate, setOpenDate] = useState<string | null>(null);
 
   const projectsById = useMemo(() => new Map(projects.map((p) => [p.id, p])), [projects]);
 
@@ -16,6 +18,10 @@ export function HistoryView() {
     }
     return [...map.entries()].sort(([a], [b]) => (a < b ? 1 : -1));
   }, [timeEntries]);
+
+  if (openDate) {
+    return <DayDetailView dateKey={openDate} onBack={() => setOpenDate(null)} />;
+  }
 
   return (
     <div>
@@ -32,7 +38,7 @@ export function HistoryView() {
               dateKey={dateKey}
               entries={entries}
               projectsById={projectsById}
-              onEditSegment={editSegment}
+              onOpenDay={setOpenDate}
               onDeleteEntry={deleteEntry}
             />
           ))}

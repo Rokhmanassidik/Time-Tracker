@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useLocalStorageState } from './useLocalStorageState';
 import { useTodayKey } from './useTodayKey';
 import { toDateKey } from '../lib/date';
-import { autoCloseStaleEntries, closeOpenSegment, getEntryDurationMs, openSegment, updateSegment } from '../lib/time-entries';
+import { autoCloseStaleEntries, closeOpenSegment, getEntryDurationMs, openSegment } from '../lib/time-entries';
 import type { TimeEntry } from '../types';
 
 const STORAGE_KEY = 'time-tracker:time-entries';
@@ -99,15 +99,6 @@ export function useTimeTracking() {
     [setTimeEntries],
   );
 
-  const editSegment = useCallback(
-    (entryId: string, segmentId: string, newStartISO: string, newEndISO: string) => {
-      setTimeEntries((prev) =>
-        prev.map((e) => (e.id === entryId ? updateSegment(e, segmentId, newStartISO, newEndISO) : e)),
-      );
-    },
-    [setTimeEntries],
-  );
-
   /** Deletes an entire day's record for one project (all its segments). */
   const deleteEntry = useCallback(
     (entryId: string) => {
@@ -125,7 +116,6 @@ export function useTimeTracking() {
     pause,
     resume,
     end,
-    editSegment,
     deleteEntry,
   };
 }
