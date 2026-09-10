@@ -18,10 +18,12 @@ export function buildDayTimeline(
 ): { blocks: TimelineBlock[]; workStart: string; workEnd: string } {
   const dayEntries = entries.filter((e) => e.dateKey === dateKey);
 
+  // A still-open segment (e.g. the timer was left running) is treated as ending
+  // "now" so its elapsed time shows up as a normal, editable block instead of
+  // silently disappearing from the timeline.
+  const nowISO = new Date().toISOString();
   const raw: TimelineBlock[] = dayEntries.flatMap((entry) =>
-    entry.segments
-      .filter((s): s is Segment & { end: string } => s.end !== null)
-      .map((s) => ({ start: s.start, end: s.end, projectId: entry.projectId })),
+    entry.segments.map((s) => ({ start: s.start, end: s.end ?? nowISO, projectId: entry.projectId })),
   );
   raw.sort((a, b) => a.start.localeCompare(b.start));
 
@@ -122,6 +124,9 @@ export function timelineToEntries(blocks: TimelineBlock[], dateKey: string): Tim
     projectId,
     dateKey,
     segments,
-    status: 'ended' as const,
+    // 'paused', not 'ended' — a Day Detail edit is a correction, not a declaration
+    // that the project is done for the day. Start/Resume must stay available;
+    // the user can still hit End explicitly if they really are finished.
+    status: 'paused' as const,
   }));
 }
